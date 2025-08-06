@@ -1,0 +1,41 @@
+llm_model: gpt-4o-mini      # OpenAI: "gpt-4o", "gpt-4o-mini" | Gemini: "gemini-2.5-pro", "gemini-1.5-flash" | Ollama: "qwen2.5:32b", "llama3.2:latest", etc.
+record_model: gemini-2.5-flash                          # Local: "whisper" | OpenAI: "whisper-api" | Gemini: , "gemini-2.5-pro", etc.
+whisper_model: large-v3                        # Whisperモデルサイズ: "tiny", "base", "small", "medium", "large", "large-v2", "large-v3"
+device_index: 0
+enable_summarization: True          # 要約機能を有効にするかどうか（Falseにすると文字起こしのみ実行）
+enable_speaker_diarization: True    # 話者識別機能を有効にするかどうか（Whisper+Pyannote.audio使用）
+
+# 処理モード選択: "local", "remote"
+# local: 全てローカルで処理
+# remote: 録音はローカル、文字起こしと要約はリモートで処理
+# (リモート処理の接続情報は.envファイルに記載)
+processing_mode: "local"
+
+enable_fallback: True
+
+local_fallback:
+  transcribe:
+    fallback_models:
+      - model: "gemini-2.0-flash"
+      - model: "whisper"
+        model_name: "large-v3"
+  summarize:
+    fallback_models:
+      - model: "qwen2.5:32b"
+
+remote_fallback:
+  enabled: False
+  transcribe:
+    fallback_models:
+      - model: "whisper"
+        model_name: "large-v3"
+  summarize:
+    fallback_models:
+      - model: "qwen2.5:32b"
+  ssh_hosts:
+    - hostname: "192.168.0.1"
+      port: 22
+    - hostname: "nk-h01.f5.si"
+      port: 6000
+    - hostname: "desktop-8eh8l9l.tail8f4bd.ts.net"
+      port: 22
